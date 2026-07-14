@@ -57,14 +57,6 @@ app.post("/clientes", (req, res) => {
         ],
         function (err) {
 
-            console.log("Criou empréstimo");
-
-const emprestimoId = this.lastID;
-
-console.log("ID:", emprestimoId);
-
-console.log("Parcelas:", parcelas);
-
             if (err) {
                 return res.status(500).json(err);
             }
@@ -172,6 +164,46 @@ app.get("/emprestimos", (req, res) => {
     });
 
 });
+
+// =======================
+// PRÓXIMO CONTRATO
+// =======================
+
+app.get("/proximo-contrato", (req, res) => {
+
+    db.get(
+        `SELECT contrato
+         FROM emprestimos
+         ORDER BY id DESC
+         LIMIT 1`,
+        [],
+        (err, row) => {
+
+            if (err) {
+                return res.status(500).json(err);
+            }
+
+            let numero = 1;
+
+            if (row && row.contrato) {
+
+                numero =
+                    parseInt(row.contrato.split("-")[2]) + 1;
+
+            }
+
+            const contrato =
+                `AX-2026-${numero.toString().padStart(6, "0")}`;
+
+            res.json({
+                contrato
+            });
+
+        }   // fecha o callback (err, row) => {
+
+    );      // fecha o db.get
+
+});         // fecha o app.get
 
 // =======================
 // CADASTRAR EMPRÉSTIMO
