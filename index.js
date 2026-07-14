@@ -371,6 +371,47 @@ app.put("/emprestimos/:id", (req, res) => {
 
 });
 
+// =======================
+// EXCLUIR EMPRÉSTIMO
+// =======================
+
+app.delete("/emprestimos/:id", (req, res) => {
+
+    const id = req.params.id;
+
+    // Primeiro exclui as parcelas do empréstimo
+    db.run(
+        "DELETE FROM pagamentos WHERE emprestimo_id = ?",
+        [id],
+        function(err){
+
+            if(err){
+                return res.status(500).json(err);
+            }
+
+            // Depois exclui o empréstimo
+            db.run(
+                "DELETE FROM emprestimos WHERE id = ?",
+                [id],
+                function(err){
+
+                    if(err){
+                        return res.status(500).json(err);
+                    }
+
+                    res.json({
+                        sucesso: true,
+                        mensagem: "Empréstimo excluído com sucesso!"
+                    });
+
+                }
+            );
+
+        }
+    );
+
+});
+
 
 // ============================
 // CADASTRAR PAGAMENTO
