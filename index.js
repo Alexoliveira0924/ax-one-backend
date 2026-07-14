@@ -316,6 +316,61 @@ app.get("/pagamentos", (req, res) => {
 
 });
 
+// =======================
+// ATUALIZAR EMPRÉSTIMO
+// =======================
+
+app.put("/emprestimos/:id", (req, res) => {
+
+    const {
+        contrato,
+        cliente,
+        valor,
+        juros,
+        parcelas,
+        dataEmprestimo,
+        primeiroVencimento,
+        observacoes
+    } = req.body;
+
+    db.run(
+        `UPDATE emprestimos
+        SET
+            contrato = ?,
+            cliente = ?,
+            valor = ?,
+            juros = ?,
+            parcelas = ?,
+            dataEmprestimo = ?,
+            primeiroVencimento = ?,
+            observacoes = ?
+        WHERE id = ?`,
+        [
+            contrato,
+            cliente,
+            valor,
+            juros,
+            parcelas,
+            dataEmprestimo,
+            primeiroVencimento,
+            observacoes,
+            req.params.id
+        ],
+        function (err) {
+
+            if (err) {
+                return res.status(500).json(err);
+            }
+
+            res.json({
+                mensagem: "Empréstimo atualizado com sucesso!"
+            });
+
+        }
+    );
+
+});
+
 
 // ============================
 // CADASTRAR PAGAMENTO
